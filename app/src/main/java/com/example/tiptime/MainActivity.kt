@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -30,6 +31,7 @@ import java.text.NumberFormat
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.text.input.KeyboardType
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -62,7 +64,9 @@ fun TipTimeLayout() {
                     .padding(bottom = 16.dp, top = 40.dp)
                     .align(alignment = Alignment.Start)
             )
-            EditNumberField(modifier = Modifier.padding(bottom = 32.dp).fillMaxWidth())
+            EditNumberField(modifier = Modifier
+                .padding(bottom = 32.dp)
+                .fillMaxWidth())
             Text(
                 text = stringResource(R.string.tip_amount, "$0.00"),
                 style = MaterialTheme.typography.displaySmall
@@ -75,10 +79,15 @@ fun TipTimeLayout() {
 @Composable
 fun EditNumberField(modifier: Modifier = Modifier){
     var amountInput by remember { mutableStateOf("") }
+    val amount = amountInput.toDoubleOrNull() ?: 0.0
+    val tip = calculateTip(amount)
     TextField(
         value = amountInput,
-        onValueChange = {},
-        modifier = modifier
+        onValueChange = {amountInput = it},
+        modifier = modifier,
+        singleLine = true,
+        label = {Text(stringResource(id = (R.string.bill_amount)))},
+        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
     )
 }
 

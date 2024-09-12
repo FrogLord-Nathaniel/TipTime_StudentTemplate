@@ -1,12 +1,14 @@
 package com.example.tiptime
 
 import android.os.Bundle
+import android.widget.Switch
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -34,6 +36,9 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.foundation.layout.size
+import androidx.compose.material3.Switch
+import androidx.compose.foundation.layout.wrapContentWidth
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -53,6 +58,7 @@ fun TipTimeLayout() {
     val tipPercent = tipInput.toDoubleOrNull() ?: 0.0
     var amountInput by remember { mutableStateOf("") }
     val amount = amountInput.toDoubleOrNull() ?: 0.0
+    var roundUp by remember { mutableStateOf(false) }
     val tip = calculateTip(amount, tipPercent)
     Surface(
         modifier = Modifier.fillMaxSize(),
@@ -91,7 +97,14 @@ fun TipTimeLayout() {
                 ),
                 value = tipInput,
                 onValueChange = {tipInput = it},
-                modifier = Modifier.padding(bottom = 32.dp).fillMaxWidth()
+                modifier = Modifier
+                    .padding(bottom = 32.dp)
+                    .fillMaxWidth()
+            )
+            RoundTheTipRow(
+                roundUp = roundUp,
+                onRoundUpChanged = {roundUp = it},
+                modifier = Modifier.padding(bottom = 32.dp)
             )
             Text(
                 text = stringResource(R.string.tip_amount, tip),
@@ -122,6 +135,28 @@ fun EditNumberField(
         )
 }
 
+@Composable
+fun RoundTheTipRow(
+    roundUp: Boolean,
+    onRoundUpChanged: (Boolean) -> Unit,
+    modifier: Modifier = Modifier){
+    Row(
+        modifier = modifier
+            .fillMaxWidth()
+            .size(48.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ){
+        Text(text = stringResource(id = R.string.round_up_tip))
+        Switch(
+            checked = roundUp,
+            onCheckedChange = onRoundUpChanged,
+            modifier = modifier
+                .fillMaxWidth()
+                .wrapContentWidth(Alignment.End),
+        )
+    }
+
+}
 
 /**
  * Calculates the tip based on the user input and format the tip amount
